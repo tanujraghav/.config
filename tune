@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+set -e
+
+[ $EUID -ne 0 ] && { echo "run as root" >&2; exit 1; }
+
+apt update
+apt full-upgrade --auto-remove --verbose-versions --assume-yes
+apt autoclean
+dpkg --purge $(dpkg --list | awk '/^rc/ { print $2 }') 2>/dev/null
