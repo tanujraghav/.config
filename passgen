@@ -4,7 +4,7 @@ DIR="$HOME/.secret"
 IDX="$DIR/README.md"
 
 LEN=18
-KEY="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+-=[]{}|;:,.<>?"
+KEY="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+-=[]{};:,.<>?"
 
 password_availablility(){
   password=`grep "| $platform | $username |" $IDX | cut -d' ' -f9`
@@ -29,7 +29,7 @@ update() {
   retrieve
   local id=`grep -n "| $platform | $username |" $IDX | cut -d: -f1`
   generate
-  sed -i "$id s/.*/| $(($id-2)) | $platform | $username | $(printf "%q" $password) |/" $IDX
+  sed -i "$id s/.*/| $(($id-2)) | $platform | $username | \`$(printf "%q" $password)\` |/" $IDX
   git_update "update password for $username @ $platform"
 }
 
@@ -37,7 +37,7 @@ add(){
   password_availablility
   [ -n "$password" ] && { echo -e "\e[1;31m409 Conflict\e[0m password already available for \e[1;32m$username\e[0m @ \e[1;32m$platform\e[0m" >&2; exit 1; }
   generate
-  echo "| $((`wc -l < $IDX`- 1)) | $platform | $username | $password |" >> $IDX
+  echo "| $((`wc -l < $IDX`- 1)) | $platform | $username | \`$password\` |" >> $IDX
   git_update "add password for $username @ $platform"
 }
 
@@ -60,3 +60,4 @@ case $1 in
 esac
 
 echo $password | xclip -selection clipboard
+
